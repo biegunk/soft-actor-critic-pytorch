@@ -1,9 +1,7 @@
 import random
-
-import torch
-
 from collections import namedtuple
 
+import torch
 
 Transition = namedtuple("Transition", ("state", "action", "reward", "next_state", "done"))
 

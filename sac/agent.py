@@ -3,10 +3,10 @@ from pathlib import Path
 
 import numpy as np
 import torch
-
-from sac.learner import SACLearner
-from sac.config import Config
 from replay_buffer import ReplayBuffer, Transition
+
+from sac.config import Config
+from sac.learner import SACLearner
 
 
 class SACAgent:

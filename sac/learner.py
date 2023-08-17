@@ -2,12 +2,11 @@
 
 
 import torch
-from torch import nn
 import torch.nn.functional as F
-from torch import optim
+from torch import nn, optim
 
-from sac.network import SACActor, SACCritic
 from sac.config import Config
+from sac.network import SACActor, SACCritic
 
 
 class SACLearner:

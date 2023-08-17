@@ -5,12 +5,12 @@ from typing import Optional
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
+from torch.utils.tensorboard.writer import SummaryWriter
 from tqdm import tqdm
 
 from sac.agent import SACAgent
-from util.wrappers import DMCWrapper
 from util.utils import moving_average
-from torch.utils.tensorboard.writer import SummaryWriter
+from util.wrappers import DMCWrapper
 
 
 def train(

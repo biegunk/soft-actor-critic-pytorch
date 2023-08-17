@@ -1,14 +1,14 @@
 # pyright: reportGeneralTypeIssues=false
 
 import argparse
-from enum import Enum
 import json
 import os
 import random
+from enum import Enum
 from pathlib import Path
 from typing import Optional
-import cv2
 
+import cv2
 import numpy as np
 import torch
 

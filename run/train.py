@@ -1,16 +1,17 @@
 import argparse
-from pathlib import Path
 import time
+from pathlib import Path
 
-from sac.agent import SACAgent
-from sac.learner import SACLearner
-from sac.config import Config, write_out_config
-from sac.replay_buffer import ReplayBuffer
-from run.runner import plot_test_curve, plot_train_curve, train, test
-from util.utils import is_gpu, set_seeds, write_out_args
-from util.wrappers import DMCWrapper
 import dm_control.suite as suite
 from torch.utils.tensorboard.writer import SummaryWriter
+
+from run.runner import plot_test_curve, plot_train_curve, test, train
+from sac.agent import SACAgent
+from sac.config import Config, write_out_config
+from sac.learner import SACLearner
+from sac.replay_buffer import ReplayBuffer
+from util.utils import is_gpu, set_seeds, write_out_args
+from util.wrappers import DMCWrapper
 
 
 def parse_args() -> argparse.Namespace:
