@@ -4,7 +4,6 @@ from typing import Optional
 
 import matplotlib.pyplot as plt
 import numpy as np
-import optuna
 import torch
 from tqdm import tqdm
 
@@ -22,8 +21,7 @@ def train(
     test_every: int = 10,
     num_test_eps: int = 10,
     save_policy: bool = True,
-    logs_dir: Path = Path("logs"),
-    trial: Optional[optuna.Trial] = None,
+    tb_writer: Optional[SummaryWriter] = None,
 ) -> tuple[list[float], list[float]]:
     """Performs [num_train_eps] episodes of training of the agent on the environment
     Performs [num_test_eps] test episodes every [test_every] episodes"""
@@ -40,26 +38,19 @@ def train(
         # run test episode every self.test_every episodes (including before and after training)
         if not (episode - 1) % test_every:
             test_start_time = time.time()
-            test_reward, _ = test_agent(
+            test_reward, _ = test(
                 agent=agent,
                 env=env,
                 num_test_eps=num_test_eps,
             )
             test_end_time = time.time()
             test_ep_rewards.append(test_reward)
-            agent.rl_algo.writer.add_scalar("reward/test", test_reward, episode)
+            if tb_writer:
+                tb_writer.add_scalar("reward/test", test_reward, episode)
             tqdm.write(
                 f"Ep: {episode - 1} || # Test Eps: {num_test_eps} || Mean Test Reward: {test_reward:.2f} || "
                 f"Total Test Time: {test_end_time - test_start_time:.2f}s"
             )
-
-            if trial is not None:
-                step = episode - 1 // test_every
-                trial.report(test_reward, step)
-
-                # Handle pruning based on the intermediate value.
-                if trial.should_prune():
-                    raise optuna.TrialPruned()
 
             # save policy if beats best score so far
             if test_reward > best_test_reward and save_policy:
@@ -68,16 +59,17 @@ def train(
             agent.save_policy(out_dir / "last")
 
             # ensure agent is training
-            agent.is_training()
+            agent.is_training = True
 
         # run episode and store reward
-        ep_reward, _, _, _ = single_episode(env=env, agent=agent)
+        ep_reward, _ = single_episode(env=env, agent=agent)
         ep_rewards.append(ep_reward)
-        agent.rl_algo.writer.add_scalar("reward/train", ep_reward, episode)
+        if tb_writer:
+            tb_writer.add_scalar("reward/train", ep_reward, episode)
 
     # run test episode after training
     test_start_time = time.time()
-    test_reward, _ = test_agent(
+    test_reward, _ = test(
         agent=agent,
         env=env,
         num_test_eps=num_test_eps,
@@ -91,7 +83,7 @@ def train(
     return ep_rewards, test_ep_rewards
 
 
-def test_agent(
+def test(
     agent: SACAgent,
     env: DMCWrapper,
     num_test_eps: int = 10,
@@ -101,12 +93,13 @@ def test_agent(
     and saves trajectories to disc (optional)"""
 
     # ensure agent is not training
-    agent.is_testing()
-    ep_rewards = []
+    agent.is_training = False
 
+    ep_rewards = []
+    frames: list[np.ndarray] = []
     for episode in range(1, num_test_eps + 1):
         # run episode and store rewards and trajectories
-        ep_reward, _, _, frames = single_episode(env=env, agent=agent, render=render)
+        ep_reward, frames = single_episode(env=env, agent=agent, render=render)
         ep_rewards.append(ep_reward)
 
     mean_rewards = np.mean(ep_rewards)
@@ -117,13 +110,13 @@ def single_episode(
     env: DMCWrapper,
     agent: SACAgent,
     render: bool = False,
-) -> tuple[float, np.ndarray, np.ndarray, list[np.ndarray]]:
+) -> tuple[float, list[np.ndarray]]:
     """Runs one episode of the environment"""
 
     obs, reward, done = env.reset()
-    frames = []
+    frames: list[np.ndarray] = []
     if render:
-        frame = np.hstack([env.physics.render(camera_id=0), env.physics.render(camera_id=1)])
+        frame = np.hstack([env.render(camera_id=0), env.render(camera_id=1)])
         frames.append(frame)
     ep_reward = 0.0
     done = False
@@ -140,12 +133,7 @@ def single_episode(
             terminal = done
 
         if render:
-            frame = np.hstack(
-                [
-                    env.physics.render(camera_id=0),
-                    env.physics.render(camera_id=1),
-                ]
-            )
+            frame = np.hstack([env.render(camera_id=0), env.render(camera_id=1)])
             frames.append(frame)
 
         agent.step(
@@ -166,8 +154,8 @@ def plot_train_curve(path: Path, train_rewards: list[float]) -> None:
     smoothed_rewards = moving_average(np.array(train_rewards), 20)
     plt.figure()
     plt.plot(range(1, len(smoothed_rewards) + 1), smoothed_rewards)
-    plt.xlabel("Number of Training Episodes")
-    plt.ylabel("Smoothed Reward")
+    plt.xlabel("# Train Eps")
+    plt.ylabel("Smoothed Train Return")
     plt.tight_layout()
     plt.savefig((path / "train_curve.png").as_posix())
 
@@ -176,7 +164,7 @@ def plot_test_curve(path: Path, test_rewards: list[float], test_every: int) -> N
     """Plots the evolution of mean test reward throughout training"""
     plt.figure()
     plt.plot(np.arange(len(test_rewards)) * test_every, test_rewards)
-    plt.xlabel("Number of Training Episodes")
-    plt.ylabel("Mean Test Reward")
+    plt.xlabel("# Train Eps")
+    plt.ylabel("Mean Test Return")
     plt.tight_layout()
     plt.savefig((path / "test_curve.png").as_posix())

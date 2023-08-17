@@ -47,3 +47,7 @@ class DMCWrapper:
     @property
     def step_limit(self) -> float:
         return float(self._env._step_limit)
+
+    def render(self, camera_id: int = 0) -> np.ndarray:
+        frame: np.ndarray = self._env.physics.render(camera_id)
+        return frame

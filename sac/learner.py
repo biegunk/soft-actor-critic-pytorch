@@ -15,20 +15,20 @@ class SACLearner:
 
     def __init__(self, config: Config) -> None:
         self.actor: SACActor = SACActor(
-            config, config.state_dim, config.actor_hidden_dim, config.action_dim
+            config, config.obs_dim, config.actor_hidden_dim, config.action_dim
         ).to(config.device)
         self.q_net_1 = SACCritic(
-            config.state_dim + config.action_dim, config.critic_hidden_dim, 1
+            config.obs_dim + config.action_dim, config.critic_hidden_dim, 1
         ).to(config.device)
         self.q_net_2 = SACCritic(
-            config.state_dim + config.action_dim, config.critic_hidden_dim, 1
+            config.obs_dim + config.action_dim, config.critic_hidden_dim, 1
         ).to(config.device)
 
         self.q_net_1_target = SACCritic(
-            config.state_dim + config.action_dim, config.critic_hidden_dim, 1
+            config.obs_dim + config.action_dim, config.critic_hidden_dim, 1
         ).to(config.device)
         self.q_net_2_target = SACCritic(
-            config.state_dim + config.action_dim, config.critic_hidden_dim, 1
+            config.obs_dim + config.action_dim, config.critic_hidden_dim, 1
         ).to(config.device)
         self.hard_update(self.q_net_1_target, self.q_net_1)
         self.hard_update(self.q_net_2_target, self.q_net_2)

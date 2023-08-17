@@ -6,12 +6,11 @@ import json
 import os
 import random
 from pathlib import Path
+from typing import Optional
+import cv2
 
-import matplotlib.animation as animation
-import matplotlib.pyplot as plt
 import numpy as np
 import torch
-from torch import nn
 
 
 class EnumWithChoices(Enum):
@@ -33,12 +32,15 @@ def set_seeds(seed: int = 42) -> None:
     torch.backends.cudnn.deterministic = True
 
 
-def is_gpu() -> str:
-    if torch.cuda.is_available():
+def is_gpu(device: Optional[str] = None) -> str:
+    if torch.cuda.is_available() and device in {"cuda", "gpu", None}:
+        print("Running on CUDA")
         return "cuda"
-    elif torch.backends.mps.is_available():
+    elif torch.backends.mps.is_available() and device in {"mps", "gpu", None}:
+        print("Running on MPS")
         return "mps"
     else:
+        print("Running on CPU")
         return "cpu"
 
 
@@ -49,3 +51,21 @@ def moving_average(x: np.ndarray, w: int) -> np.ndarray:
 def write_out_args(args: argparse.Namespace, out_dir: Path) -> None:
     with (out_dir / "args.json").open("+w") as f:
         json.dump(vars(args), f, indent=4)
+
+
+def convert_arrays_to_video(
+    frames: list[np.ndarray], out_dir: Path, fps: int = 60, suffix: str = ""
+) -> None:
+    first_array: np.ndarray = frames[0]
+    height, width, _ = first_array.shape
+
+    fourcc = cv2.VideoWriter_fourcc(*"mp4v")  # type: ignore
+    video_writer = cv2.VideoWriter(
+        (out_dir / f"video{suffix}.mp4").as_posix(), fourcc, fps, (width, height)
+    )
+
+    for frame in frames:
+        video_writer.write(frame)
+    video_writer.release()
+
+    print("Video conversion completed.")

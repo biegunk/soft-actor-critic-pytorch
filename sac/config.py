@@ -12,8 +12,8 @@ class Config:
     # action dimension
     action_dim: int
 
-    # dimension of observed state
-    state_dim: int
+    # observation dimension
+    obs_dim: int
 
     # number of hidden nodes in the actor network
     actor_hidden_dim: int = 256
@@ -55,8 +55,11 @@ class Config:
     # temperature learning rate
     temp_lr: float = 0.001
 
+    # size of replay buffer
+    buffer_size: int = int(1e6)
+
     # device to run model on: CUDA if available else CPU
-    device: str = is_gpu()
+    device: str = "cpu"
 
 
 def write_out_config(config: Config, out_dir: Path) -> None:
