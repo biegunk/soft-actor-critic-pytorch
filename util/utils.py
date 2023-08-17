@@ -1,3 +1,5 @@
+# pyright: reportGeneralTypeIssues=false
+
 import argparse
 from enum import Enum
 import json
@@ -10,7 +12,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import torch
 from torch import nn
-
 
 
 class EnumWithChoices(Enum):

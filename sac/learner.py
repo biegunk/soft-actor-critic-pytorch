@@ -1,3 +1,6 @@
+# pyright: reportPrivateImportUsage=false
+
+
 import torch
 from torch import nn
 import torch.nn.functional as F
@@ -40,6 +43,7 @@ class SACLearner:
         self.entropy_target = -config.action_dim  # entropy target is -dim(A)
 
         self.config = config
+        self.t = 0
 
     @property
     def temp(self) -> torch.Tensor:

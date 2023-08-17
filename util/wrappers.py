@@ -39,11 +39,11 @@ class DMCWrapper:
             timestep.reward,
             timestep.last(),
         )
-    
-    @property
-    def step_count(self) -> int:
-        return self._env._step_count
 
     @property
-    def step_limit(self) -> int:
-        return self._env._step_limit
+    def step_count(self) -> int:
+        return int(self._env._step_count)
+
+    @property
+    def step_limit(self) -> float:
+        return float(self._env._step_limit)

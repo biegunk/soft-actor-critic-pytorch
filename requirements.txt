@@ -5,7 +5,12 @@
 #    pip-compile requirements.in
 #
 absl-py==1.4.0
-    # via tensorboard
+    # via
+    #   dm-control
+    #   dm-env
+    #   labmaze
+    #   mujoco
+    #   tensorboard
 black==23.7.0
     # via -r requirements.in
 cachetools==5.3.1
@@ -20,10 +25,22 @@ contourpy==1.1.0
     # via matplotlib
 cycler==0.11.0
     # via matplotlib
+dm-control==1.0.14
+    # via -r requirements.in
+dm-env==1.6
+    # via dm-control
+dm-tree==0.1.8
+    # via
+    #   dm-control
+    #   dm-env
 filelock==3.12.2
     # via torch
 fonttools==4.42.0
     # via matplotlib
+glfw==2.6.2
+    # via
+    #   dm-control
+    #   mujoco
 google-auth==2.22.0
     # via
     #   google-auth-oauthlib
@@ -44,6 +61,10 @@ jinja2==3.1.2
     # via torch
 kiwisolver==1.4.4
     # via matplotlib
+labmaze==1.0.6
+    # via dm-control
+lxml==4.9.3
+    # via dm-control
 markdown==3.4.4
     # via tensorboard
 markupsafe==2.1.3
@@ -54,6 +75,8 @@ matplotlib==3.7.2
     # via -r requirements.in
 mpmath==1.3.0
     # via sympy
+mujoco==2.3.7
+    # via dm-control
 mypy==1.5.1
     # via -r requirements.in
 mypy-extensions==1.0.0
@@ -67,8 +90,13 @@ numpy==1.25.2
     # via
     #   -r requirements.in
     #   contourpy
+    #   dm-control
+    #   dm-env
+    #   labmaze
     #   matplotlib
+    #   mujoco
     #   opencv-python
+    #   scipy
     #   tensorboard
 oauthlib==3.2.2
     # via requests-oauthlib
@@ -85,25 +113,36 @@ pillow==10.0.0
 platformdirs==3.10.0
     # via black
 protobuf==4.24.0
-    # via tensorboard
+    # via
+    #   dm-control
+    #   tensorboard
 pyasn1==0.5.0
     # via
     #   pyasn1-modules
     #   rsa
 pyasn1-modules==0.3.0
     # via google-auth
+pyopengl==3.1.7
+    # via
+    #   dm-control
+    #   mujoco
 pyparsing==3.0.9
-    # via matplotlib
+    # via
+    #   dm-control
+    #   matplotlib
 python-dateutil==2.8.2
     # via matplotlib
 requests==2.31.0
     # via
+    #   dm-control
     #   requests-oauthlib
     #   tensorboard
 requests-oauthlib==1.3.1
     # via google-auth-oauthlib
 rsa==4.9
     # via google-auth
+scipy==1.11.1
+    # via dm-control
 six==1.16.0
     # via
     #   google-auth
@@ -120,6 +159,8 @@ tomli==2.0.1
     #   mypy
 torch==2.0.1
     # via -r requirements.in
+tqdm==4.66.1
+    # via dm-control
 typing-extensions==4.7.1
     # via
     #   -r requirements.in

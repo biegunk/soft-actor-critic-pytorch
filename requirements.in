@@ -8,3 +8,4 @@ torch
 typing_extensions
 opencv-python
 tensorboard
+dm_control
