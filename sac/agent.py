@@ -4,8 +4,8 @@ from pathlib import Path
 import numpy as np
 import torch
 
-from learner import SACLearner
-from config import Config
+from sac.learner import SACLearner
+from sac.config import Config
 from replay_buffer import ReplayBuffer, Transition
 
 

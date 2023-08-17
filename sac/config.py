@@ -2,9 +2,7 @@ import json
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
-import torch
-
-from utils.helpers import is_gpu
+from util.utils import is_gpu
 
 
 @dataclass

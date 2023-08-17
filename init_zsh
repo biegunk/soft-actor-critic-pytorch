@@ -1,0 +1,8 @@
+#!/bin/zsh
+DIR=$(dirname $(realpath ${0:A}))
+echo "DIR: ${DIR}"
+cd "${DIR}"
+source ./venv/bin/activate
+echo "Activated virtual environment"
+export PYTHONPATH="${DIR}"
+echo "PYTHONPATH set to ${PYTHONPATH}"

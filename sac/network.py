@@ -3,11 +3,11 @@ import torch.nn.functional as F
 from torch import nn
 from torch.distributions import Normal
 
-from utils.config import Config
+from sac.config import Config
 
 
 class SACActor(nn.Module):
-    """Diagonal Gaussian actor network for SAC algorithm. Consists of 2 linear layers and two output layers 
+    """Diagonal Gaussian actor network for SAC algorithm. Consists of 2 linear layers and two output layers
     returning a mean and log std of the resulting policy distribution."""
 
     def __init__(
@@ -68,6 +68,7 @@ class SACActor(nn.Module):
         )
 
         return actions, log_prob
+
 
 class SACCritic(nn.Module):
     def __init__(self, input_dim: int, hidden_dim: int, output_dim: int) -> None:

@@ -3,15 +3,14 @@ from torch import nn
 import torch.nn.functional as F
 from torch import optim
 
-from network import SACActor, SACCritic
-from config import Config
+from sac.network import SACActor, SACCritic
+from sac.config import Config
 
 
 class SACLearner:
     """Learner class for the SAC algorithm"""
 
     def __init__(self, config: Config) -> None:
-
         self.actor: SACActor = SACActor(
             config, config.state_dim, config.actor_hidden_dim, config.action_dim
         ).to(config.device)
