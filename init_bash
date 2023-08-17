@@ -1,0 +1,8 @@
+#!/bin/bash
+DIR=$(dirname $(realpath ${BASH_SOURCE}))
+echo "DIR: ${DIR}"
+cd "${DIR}"
+source ./venv/bin/activate
+echo "Activated virtual environment"
+export PYTHONPATH="${DIR}"
+echo "PYTHONPATH set to ${PYTHONPATH}"

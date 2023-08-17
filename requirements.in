@@ -1,0 +1,10 @@
+black
+isort
+matplotlib
+mypy
+mypy-extensions
+numpy
+torch
+typing_extensions
+opencv-python
+tensorboard
