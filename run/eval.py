@@ -15,7 +15,7 @@ from util.wrappers import DMCWrapper
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser("Train SAC agent on specified environment")
+    parser = argparse.ArgumentParser("Test SAC agent on specified environment")
     parser.add_argument(
         "--domain-naim",
         type=str,
