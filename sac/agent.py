@@ -3,7 +3,7 @@ from pathlib import Path
 
 import numpy as np
 import torch
-from replay_buffer import ReplayBuffer, Transition
+from sac.replay_buffer import ReplayBuffer, Transition
 
 from sac.config import Config
 from sac.learner import SACLearner

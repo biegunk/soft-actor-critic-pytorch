@@ -91,8 +91,8 @@ class SACLearner:
 
         # calculate Q-values for current state
         inputs = torch.cat((state_batch, action_batch), dim=-1)
-        q1_values = self.q_net_1(inputs)
-        q2_values = self.q_net_2(inputs)
+        q1_values: torch.Tensor = self.q_net_1(inputs)
+        q2_values: torch.Tensor = self.q_net_2(inputs)
 
         # calculate critic loss
         q1_loss = F.mse_loss(q1_values, q_targets)

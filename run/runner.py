@@ -54,9 +54,8 @@ def train(
 
             # save policy if beats best score so far
             if test_reward > best_test_reward and save_policy:
-                agent.save_policy(out_dir / "best")
+                agent.save_policy(out_dir)
                 best_test_reward = test_reward
-            agent.save_policy(out_dir / "last")
 
             # ensure agent is training
             agent.is_training = True

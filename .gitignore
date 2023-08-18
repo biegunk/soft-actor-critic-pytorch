@@ -1,3 +1,6 @@
 venv
 bootstrap
 .vscode
+*/__pycache__
+out
+.env

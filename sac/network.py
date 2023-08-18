@@ -67,7 +67,7 @@ class SACActor(nn.Module):
             1 - actions**2 + self.epsilon
         )
 
-        return actions, log_prob
+        return actions, log_prob.sum(-1, keepdim=True)
 
 
 class SACCritic(nn.Module):
