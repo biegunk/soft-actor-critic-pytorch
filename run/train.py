@@ -12,7 +12,6 @@ from sac.learner import SACLearner
 from sac.replay_buffer import ReplayBuffer
 from util.utils import is_gpu, set_seeds, write_out_args
 from util.wrappers import DMCWrapper
-from dm_control.suite import BENCHMARKING
 
 
 def parse_args() -> argparse.Namespace:
@@ -38,7 +37,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--n-test",
         type=int,
-        default=1,
+        default=10,
         help="Number of test episodes per evaluation",
     )
     parser.add_argument(
@@ -48,9 +47,10 @@ def parse_args() -> argparse.Namespace:
         help="Number of train episodes between evaluations",
     )
     parser.add_argument(
-        "--out_dir",
+        "--out-dir",
         type=str,
         default="out",
+        help="Path to directory to save weights, configs and train/test curves",
     )
     parser.add_argument(
         "--device",
@@ -59,6 +59,7 @@ def parse_args() -> argparse.Namespace:
         help="Which device to run on, defaults to GPU if available else CPU",
         choices=["cpu", "gpu", "cuda", "mps"],
     )
+    parser.add_argument("--seed", type=int, help="Random seed", default=42)
     return parser.parse_args()
 
 
@@ -67,7 +68,7 @@ def run(args: argparse.Namespace) -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     write_out_args(args=args, out_dir=out_dir)
 
-    set_seeds()
+    set_seeds(args.seed)
     env = DMCWrapper(suite.load(domain_name=args.domain, task_name=args.task))
     config = Config(action_dim=env.action_dim, obs_dim=env.obs_dim, device=is_gpu(args.device))
     write_out_config(config=config, out_dir=out_dir)

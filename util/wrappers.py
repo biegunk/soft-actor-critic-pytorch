@@ -22,8 +22,13 @@ class DMCWrapper:
         self.min_action = self._env.action_spec().minimum
         self.max_action = self._env.action_spec().maximum
         self.action_dim = self._env.action_spec().shape[0]
-        self.obs_dim = sum(
-            [v.shape[0] if len(v.shape) > 0 else 1 for v in self._env.observation_spec().values()]
+        self.obs_dim = int(
+            sum(
+                [
+                    np.prod(v.shape) if len(v.shape) > 0 else 1
+                    for v in self._env.observation_spec().values()
+                ]
+            )
         )
 
     def step(self, action: np.ndarray) -> tuple[np.ndarray, float, bool]:

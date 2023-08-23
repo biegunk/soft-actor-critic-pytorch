@@ -15,7 +15,7 @@ from util.wrappers import DMCWrapper
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser("Test SAC agent on specified environment")
+    parser = argparse.ArgumentParser("Evaluate SAC agent on specified environment")
     parser.add_argument(
         "--domain",
         type=str,
@@ -26,7 +26,12 @@ def parse_args() -> argparse.Namespace:
         "--task", type=str, required=True, help="Task name of dm-control-suite environment"
     )
     parser.add_argument("--n-test", type=int, default=1, help="Number of test episodes")
-    parser.add_argument("--out_dir", type=str, default="out")
+    parser.add_argument(
+        "--out-dir",
+        type=str,
+        default="out",
+        help="Path to directory to save configs and videos",
+    )
     parser.add_argument(
         "--device",
         type=str,
@@ -41,6 +46,7 @@ def parse_args() -> argparse.Namespace:
         "--render", action="store_true", help="Whether to save video of test episodes"
     )
     parser.add_argument("--cam-ids", type=int, help="Camera IDs to render", default=0, nargs="+")
+    parser.add_argument("--seed", type=int, help="Random seed", default=42)
     return parser.parse_args()
 
 
@@ -49,7 +55,7 @@ def run(args: argparse.Namespace) -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     write_out_args(args=args, out_dir=out_dir)
 
-    set_seeds()
+    set_seeds(args.seed)
     env = DMCWrapper(suite.load(domain_name=args.domain, task_name=args.task))
     config = Config(action_dim=env.action_dim, obs_dim=env.obs_dim, device=is_gpu(args.device))
     write_out_config(config=config, out_dir=out_dir)
