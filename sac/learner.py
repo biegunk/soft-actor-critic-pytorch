@@ -89,7 +89,7 @@ class SACLearner:
         v_targets = torch.min(q1_targets, q2_targets) - self.temp.detach() * next_log_prob
         q_targets = (reward_batch + (not_done_mask * self.config.gamma * v_targets)).detach()
 
-        # calculate Q-values for current state
+        # calculate Q-values
         inputs = torch.cat((state_batch, action_batch), dim=-1)
         q1_values: torch.Tensor = self.q_net_1(inputs)
         q2_values: torch.Tensor = self.q_net_2(inputs)
