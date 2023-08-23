@@ -60,7 +60,7 @@ python run/train.py --domain cartpole --task swingup
 ```
 
 ### Evaluating:
-Evaluation is handled by `run/eval.py`. Optionally, videos of the evluation episodes are saved to `--out-dir`.
+Evaluation is handled by `run/eval.py`. Optionally, videos of the evluation episodes are saved to `{out_dir}/{domain}/{task}/{timestamp}`.
 
 ```
 usage: Evaluate SAC agent on specified environment [-h] --domain DOMAIN --task TASK [--n-test N_TEST] [--out-dir OUT_DIR]
