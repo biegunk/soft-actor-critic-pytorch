@@ -85,5 +85,5 @@ optional arguments:
 
 Example:
 ```
-python run/train.py --domain cartpole --task swingup --weight-path out/cartpole/swingup/1692744472.3513181/actor_weights.pt --render --cam-ids 0 1
+python run/eval.py --domain cartpole --task swingup --weight-path out/cartpole/swingup/1692744472.3513181/actor_weights.pt --render --cam-ids 0 1
 ```
