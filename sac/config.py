@@ -22,7 +22,7 @@ class Config:
     critic_hidden_dim: int = 256
 
     # number of transitions in training batch
-    batch_size: int = 32
+    batch_size: int = 256
 
     # action bounds output by the agent (set to -1., 1. if using normalised actions)
     min_action: float = -1.0
@@ -32,28 +32,28 @@ class Config:
     grad_clip: float = 0
 
     # critic network learning rate
-    critic_lr: float = 0.001
+    critic_lr: float = 3e-4
 
     # actor network learning rate
-    actor_lr: float = 0.001
+    actor_lr: float = 3e-4
 
     # discount factor for RL learner
     gamma: float = 0.99
 
     # soft update parameter
-    tau: float = 0.001
+    tau: float = 0.005
 
     # number of steps between target network updates
     update_targets: int = 1
 
     # minimum number of steps on environment before training
-    burn_in: int = 100
+    burn_in: int = 1024
 
     # initial temperature parameter
     init_temp: float = 1.0
 
     # temperature learning rate
-    temp_lr: float = 0.001
+    temp_lr: float = 3e-4
 
     # size of replay buffer
     buffer_size: int = int(1e6)

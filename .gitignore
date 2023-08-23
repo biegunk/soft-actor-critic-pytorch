@@ -4,3 +4,4 @@ bootstrap
 */__pycache__
 out
 .env
+.DS_Store

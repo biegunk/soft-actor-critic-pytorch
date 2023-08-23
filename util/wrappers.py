@@ -22,7 +22,9 @@ class DMCWrapper:
         self.min_action = self._env.action_spec().minimum
         self.max_action = self._env.action_spec().maximum
         self.action_dim = self._env.action_spec().shape[0]
-        self.obs_dim = sum([v.shape[0] for v in self._env.observation_spec().values()])
+        self.obs_dim = sum(
+            [v.shape[0] if len(v.shape) > 0 else 1 for v in self._env.observation_spec().values()]
+        )
 
     def step(self, action: np.ndarray) -> tuple[np.ndarray, float, bool]:
         timestep = self._env.step(action)
@@ -48,6 +50,6 @@ class DMCWrapper:
     def step_limit(self) -> float:
         return float(self._env._step_limit)
 
-    def render(self, camera_id: int = 0) -> np.ndarray:
-        frame: np.ndarray = self._env.physics.render(camera_id)
+    def render(self, camera_id: int) -> np.ndarray:
+        frame: np.ndarray = self._env.physics.render(camera_id=camera_id)
         return frame

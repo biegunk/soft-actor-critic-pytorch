@@ -5,13 +5,14 @@ from pathlib import Path
 import dm_control.suite as suite
 from torch.utils.tensorboard.writer import SummaryWriter
 
-from run.runner import plot_test_curve, plot_train_curve, test, train
+from run.runner import plot_test_curve, plot_train_curve, train
 from sac.agent import SACAgent
 from sac.config import Config, write_out_config
 from sac.learner import SACLearner
 from sac.replay_buffer import ReplayBuffer
 from util.utils import is_gpu, set_seeds, write_out_args
 from util.wrappers import DMCWrapper
+from dm_control.suite import BENCHMARKING
 
 
 def parse_args() -> argparse.Namespace:

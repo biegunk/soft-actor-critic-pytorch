@@ -63,7 +63,7 @@ def convert_arrays_to_video(
     video_writer = cv2.VideoWriter(
         (out_dir / f"video{suffix}.mp4").as_posix(), fourcc, fps, (width, height)
     )
-
+    print(out_dir.as_posix())
     for frame in frames:
         video_writer.write(frame)
     video_writer.release()

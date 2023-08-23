@@ -40,6 +40,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--render", action="store_true", help="Whether to save video of test episodes"
     )
+    parser.add_argument("--cam-ids", type=int, help="Camera IDs to render", default=0, nargs="+")
     return parser.parse_args()
 
 
@@ -56,7 +57,13 @@ def run(args: argparse.Namespace) -> None:
     learner = SACLearner(config)
     replay_buffer = ReplayBuffer(config.buffer_size)
     agent = SACAgent(config, learner, replay_buffer)
-    ep_rewards, frames = test(agent=agent, env=env, num_test_eps=args.n_test, render=args.render)
+    ep_rewards, frames = test(
+        agent=agent,
+        env=env,
+        num_test_eps=args.n_test,
+        render=args.render,
+        camera_ids=args.cam_ids,
+    )
     print(f"Mean Test Return: {ep_rewards}")
     if args.render:
         convert_arrays_to_video(frames, out_dir=out_dir)

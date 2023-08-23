@@ -87,6 +87,7 @@ def test(
     env: DMCWrapper,
     num_test_eps: int = 10,
     render: bool = False,
+    camera_ids: list[int] = [0],
 ) -> tuple[float, list[np.ndarray]]:
     """Performs [num_test_eps] test episodes of the agent on the environment
     and saves trajectories to disc (optional)"""
@@ -98,7 +99,9 @@ def test(
     frames: list[np.ndarray] = []
     for episode in range(1, num_test_eps + 1):
         # run episode and store rewards and trajectories
-        ep_reward, frames = single_episode(env=env, agent=agent, render=render)
+        ep_reward, frames = single_episode(
+            env=env, agent=agent, render=render, camera_ids=camera_ids
+        )
         ep_rewards.append(ep_reward)
 
     mean_rewards = np.mean(ep_rewards)
@@ -106,16 +109,17 @@ def test(
 
 
 def single_episode(
-    env: DMCWrapper,
-    agent: SACAgent,
-    render: bool = False,
+    env: DMCWrapper, agent: SACAgent, render: bool = False, camera_ids: list[int] = [0]
 ) -> tuple[float, list[np.ndarray]]:
     """Runs one episode of the environment"""
 
     obs, reward, done = env.reset()
     frames: list[np.ndarray] = []
     if render:
-        frame = np.hstack([env.render(camera_id=0), env.render(camera_id=1)])
+        if len(camera_ids) > 1:
+            frame = np.hstack([env.render(camera_id=id) for id in camera_ids])
+        else:
+            frame = env.render(camera_id=camera_ids[0])
         frames.append(frame)
     ep_reward = 0.0
     done = False
@@ -132,7 +136,10 @@ def single_episode(
             terminal = done
 
         if render:
-            frame = np.hstack([env.render(camera_id=0), env.render(camera_id=1)])
+            if len(camera_ids) > 1:
+                frame = np.hstack([env.render(camera_id=id) for id in camera_ids])
+            else:
+                frame = env.render(camera_id=camera_ids[0])
             frames.append(frame)
 
         agent.step(
