@@ -7,13 +7,18 @@ from util.utils import is_gpu
 
 @dataclass
 class Config:
-    """Dataclass to store all the hyperparameters shared between parts of the agent"""
+    """
+    Dataclass to store all the hyperparameters shared between parts of the agent
+    """
 
-    # action dimension
+    # action dimension - set by the environment
     action_dim: int
 
-    # observation dimension
+    # observation dimension - set by the environment
     obs_dim: int
+
+    # device to run model on - set by input clargs
+    device: str
 
     # number of hidden nodes in the actor network
     actor_hidden_dim: int = 256
@@ -57,9 +62,6 @@ class Config:
 
     # size of replay buffer
     buffer_size: int = int(1e6)
-
-    # device to run model on
-    device: str = "cpu"
 
 
 def write_out_config(config: Config, out_dir: Path) -> None:
