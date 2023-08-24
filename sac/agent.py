@@ -24,7 +24,7 @@ class SACAgent:
         self.is_training: bool = True
         self.t: int = 0  # keeps track of number of steps taken
 
-    def get_action(self, state: torch.Tensor) -> torch.Tensor:
+    def get_action(self, obs: torch.Tensor) -> torch.Tensor:
         """Returns action for a given observation."""
 
         # takes random action before we start learning (only during training episodes)
@@ -37,8 +37,8 @@ class SACAgent:
 
         # otherwise takes action according to agent's policy
         else:
-            state = state.to(self.config.device)
-            action = self.learner.actor.get_action(state, self.is_training).cpu()
+            obs = obs.to(self.config.device)
+            action = self.learner.actor.get_action(obs, self.is_training).cpu()
 
         # clip action to ensure it is within bounds of environment
         action = torch.clip(action, self.config.min_action, self.config.max_action)
@@ -47,10 +47,10 @@ class SACAgent:
 
     def step(
         self,
-        state: torch.Tensor,
+        obs: torch.Tensor,
         action: torch.Tensor,
         reward: float,
-        next_state: torch.Tensor,
+        next_obs: torch.Tensor,
         done: bool,
     ) -> None:
         """Performs one step of training on the agent
@@ -62,7 +62,7 @@ class SACAgent:
         self.t += 1
 
         # push current transition to replay buffer
-        self.save_transition(state, action, reward, next_state, done)
+        self.save_transition(obs, action, reward, next_obs, done)
 
         # prevents training until we have taken burn_in steps on the environment or if not enough experience in buffer
         if self.t < self.config.burn_in or len(self.replay_buffer) < self.config.batch_size:
@@ -85,30 +85,28 @@ class SACAgent:
         batch = Transition(*zip(*transitions))
 
         # get data from batch
-        state_batch = torch.stack(batch.state).to(self.config.device)  # batch_size x state_dim
-        action_batch = torch.stack(batch.action).to(self.config.device)  # batch_size x 1
+        obs_batch = torch.stack(batch.obs).to(self.config.device)  # batch_size x obs_dim
+        action_batch = torch.stack(batch.action).to(self.config.device)  # batch_size x action_dim
         reward_batch = torch.stack(batch.reward).to(self.config.device)  # batch_size x 1
-        next_state_batch = torch.stack(batch.next_state).to(
-            self.config.device
-        )  # batch_size x state_dim
+        next_obs_batch = torch.stack(batch.next_obs).to(self.config.device)  # batch_size x obs_dim
         not_done_mask = 1 - torch.stack(batch.done).to(self.config.device)  # batch_size x 1
-        return state_batch, action_batch, reward_batch, next_state_batch, not_done_mask
+        return obs_batch, action_batch, reward_batch, next_obs_batch, not_done_mask
 
     def save_transition(
         self,
-        state: torch.Tensor,
+        obs: torch.Tensor,
         action: torch.Tensor,
         reward: float,
-        next_state: torch.Tensor,
+        next_obs: torch.Tensor,
         done: bool,
     ) -> None:
         """Pushes transition to replay buffer"""
 
         self.replay_buffer.push(
-            state.float(),
+            obs.float(),
             action.float(),
             torch.tensor([reward]).float(),
-            next_state.float(),
+            next_obs.float(),
             torch.tensor([done]).float(),
         )
 

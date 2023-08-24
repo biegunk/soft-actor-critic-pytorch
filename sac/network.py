@@ -33,8 +33,8 @@ class SACActor(nn.Module):
         self.epsilon = epsilon  # regulariser for log
         self.args = config
 
-    def forward(self, state: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
-        x = F.relu(self.fc1(state))
+    def forward(self, obs: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
+        x = F.relu(self.fc1(obs))
         x = F.relu(self.fc2(x))
 
         mean = self.mean_linear(x)
@@ -43,10 +43,10 @@ class SACActor(nn.Module):
 
         return mean, log_std
 
-    def get_action(self, state: torch.Tensor, training: bool) -> torch.Tensor:
+    def get_action(self, obs: torch.Tensor, training: bool) -> torch.Tensor:
         """Returns an action sampled from the policy distribution via the reparametrisation trick if training,
         and returns mean action if not. Resulting actions are scaled by tanh."""
-        mean, log_std = self.forward(state)
+        mean, log_std = self.forward(obs)
         if training:
             std = log_std.exp()
             zeta = torch.randn(self.args.action_dim).to(self.args.device)
@@ -55,10 +55,10 @@ class SACActor(nn.Module):
             action = torch.tanh(mean)
         return action.detach()
 
-    def evaluate(self, state_batch: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
-        """Returns a batch of actions sampled from the policy distributions for a given batch of states, as well as
-        the log probability of those actions being selected"""
-        mean, log_std = self.forward(state_batch)
+    def evaluate(self, obs_batch: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
+        """Returns a batch of actions sampled from the policy distributions for a given batch of observations,
+        as well as the log probability of those actions being selected"""
+        mean, log_std = self.forward(obs_batch)
         std = log_std.exp()
 
         zeta = torch.randn((self.args.batch_size, self.args.action_dim)).to(self.args.device)

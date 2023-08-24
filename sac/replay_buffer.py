@@ -3,7 +3,7 @@ from collections import namedtuple
 
 import torch
 
-Transition = namedtuple("Transition", ("state", "action", "reward", "next_state", "done"))
+Transition = namedtuple("Transition", ("obs", "action", "reward", "next_obs", "done"))
 
 
 class ReplayBuffer(object):
@@ -14,16 +14,16 @@ class ReplayBuffer(object):
 
     def push(
         self,
-        state: torch.Tensor,
+        obs: torch.Tensor,
         action: torch.Tensor,
         reward: torch.Tensor,
-        next_state: torch.Tensor,
+        next_obs: torch.Tensor,
         done: torch.Tensor,
     ) -> None:
         """Stores transition in experience buffer"""
         if len(self.memory) < self.capacity:
             self.memory.append(None)
-        self.memory[self.position] = Transition(state, action, reward, next_state, done)
+        self.memory[self.position] = Transition(obs, action, reward, next_obs, done)
 
         # overwrite old experience if capacity is reached
         self.position = (self.position + 1) % self.capacity

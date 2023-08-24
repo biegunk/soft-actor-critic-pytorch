@@ -50,18 +50,18 @@ class SACLearner:
 
     def step(
         self,
-        state_batch: torch.Tensor,
+        obs_batch: torch.Tensor,
         action_batch: torch.Tensor,
         reward_batch: torch.Tensor,
-        next_state_batch: torch.Tensor,
+        next_obs_batch: torch.Tensor,
         not_done_mask: torch.Tensor,
     ) -> None:
         """Performs a step of optimisation on the agent
         batches are of dimension (batch_size, variable_dim)"""
 
         # perform training steps on critic, actor and temperature
-        self.train_critic(state_batch, action_batch, reward_batch, next_state_batch, not_done_mask)
-        log_prob = self.train_actor(state_batch)
+        self.train_critic(obs_batch, action_batch, reward_batch, next_obs_batch, not_done_mask)
+        log_prob = self.train_actor(obs_batch)
         self.train_temp(log_prob)
 
         # soft-update target networks
@@ -71,26 +71,26 @@ class SACLearner:
 
     def train_critic(
         self,
-        state_batch: torch.Tensor,
+        obs_batch: torch.Tensor,
         action_batch: torch.Tensor,
         reward_batch: torch.Tensor,
-        next_state_batch: torch.Tensor,
+        next_obs_batch: torch.Tensor,
         not_done_mask: torch.Tensor,
     ) -> None:
         """Performs a step of optimisation on the two Q-networks"""
 
         # sample next actions
-        next_action_batch, next_log_prob = self.actor.evaluate(next_state_batch)
+        next_action_batch, next_log_prob = self.actor.evaluate(next_obs_batch)
 
         # calculate target values
-        target_inputs = torch.cat((next_state_batch, next_action_batch), dim=-1)
+        target_inputs = torch.cat((next_obs_batch, next_action_batch), dim=-1)
         q1_targets = self.q_net_1_target(target_inputs)
         q2_targets = self.q_net_2_target(target_inputs)
         v_targets = torch.min(q1_targets, q2_targets) - self.temp.detach() * next_log_prob
         q_targets = (reward_batch + (not_done_mask * self.config.gamma * v_targets)).detach()
 
         # calculate Q-values
-        inputs = torch.cat((state_batch, action_batch), dim=-1)
+        inputs = torch.cat((obs_batch, action_batch), dim=-1)
         q1_values: torch.Tensor = self.q_net_1(inputs)
         q2_values: torch.Tensor = self.q_net_2(inputs)
 
@@ -109,14 +109,14 @@ class SACLearner:
         self.q_net_1_optimiser.step()
         self.q_net_2_optimiser.step()
 
-    def train_actor(self, state_batch: torch.Tensor) -> torch.Tensor:
+    def train_actor(self, obs_batch: torch.Tensor) -> torch.Tensor:
         """Performs a step of optimisation on the actor network"""
 
         # sample actions and calculate log probability
-        actions, log_prob = self.actor.evaluate(state_batch)
+        actions, log_prob = self.actor.evaluate(obs_batch)
 
         # calculate Q-values
-        inputs = torch.cat((state_batch, actions), dim=-1)
+        inputs = torch.cat((obs_batch, actions), dim=-1)
         q1_values = self.q_net_1(inputs)
         q2_values = self.q_net_2(inputs)
         q_values = torch.min(q1_values, q2_values)
