@@ -58,7 +58,7 @@ class Config:
     # size of replay buffer
     buffer_size: int = int(1e6)
 
-    # device to run model on: CUDA if available else CPU
+    # device to run model on
     device: str = "cpu"
 
 
