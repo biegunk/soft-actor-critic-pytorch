@@ -37,8 +37,7 @@ Training is handled by `run/train.py`. The best scoring policy weights throughou
 
 ```
 usage: Train SAC agent on specified environment [-h] --domain DOMAIN --task TASK [--n-train N_TRAIN] [--n-test N_TEST]
-                                                [--test-every TEST_EVERY] [--out-dir OUT_DIR]
-                                                [--device {cpu,gpu,cuda,mps}] [--seed SEED]
+                                                [--test-every TEST_EVERY] [--out-dir OUT_DIR] [--seed SEED]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -49,8 +48,6 @@ optional arguments:
   --test-every TEST_EVERY
                         Number of train episodes between evaluations (default: 10)
   --out-dir OUT_DIR     Path to directory to save weights, configs and train/test curves (default: out)
-  --device {cpu,gpu,cuda,mps}
-                        Which device to run on, defaults to GPU if available else CPU
   --seed SEED           Random seed (default: 42)
 ```
 
@@ -64,8 +61,8 @@ Evaluation is handled by `run/eval.py`. Optionally, videos of the evluation epis
 
 ```
 usage: Evaluate SAC agent on specified environment [-h] --domain DOMAIN --task TASK [--n-test N_TEST] [--out-dir OUT_DIR]
-                                                   [--device {cpu,gpu,cuda,mps}] [--weight-path WEIGHT_PATH] [--render]
-                                                   [--cam-ids CAM_IDS [CAM_IDS ...]] [--seed SEED]
+                                                   [--weight-path WEIGHT_PATH] [--render] [--cam-ids CAM_IDS [CAM_IDS ...]]
+                                                   [--seed SEED]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -73,8 +70,6 @@ optional arguments:
   --task TASK           Task name of dm-control-suite environment
   --n-test N_TEST       Number of test episodes (default: 1)
   --out-dir OUT_DIR     Path to directory to save configs and videos (default: out)
-  --device {cpu,gpu,cuda,mps}
-                        Which device to run on, defaults to GPU if available else CPU
   --weight-path WEIGHT_PATH
                         Path to saved policy weights
   --render              Whether to save video of test episodes (default: false)
