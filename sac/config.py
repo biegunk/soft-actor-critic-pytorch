@@ -17,9 +17,6 @@ class Config:
     # observation dimension - set by the environment
     obs_dim: int
 
-    # device to run model on - set by input clargs
-    device: str
-
     # number of hidden nodes in the actor network
     actor_hidden_dim: int = 256
 
@@ -62,6 +59,12 @@ class Config:
 
     # size of replay buffer
     buffer_size: int = int(1e6)
+
+    # device to run model on - choices: ['cpu', 'gpu', 'cuda', 'mps']
+    device: str = "cpu"
+
+    def __post_init__(self) -> None:
+        self.device = is_gpu(self.device)
 
 
 def write_out_config(config: Config, out_dir: Path) -> None:

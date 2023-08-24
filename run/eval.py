@@ -33,13 +33,6 @@ def parse_args() -> argparse.Namespace:
         help="Path to directory to save configs and videos",
     )
     parser.add_argument(
-        "--device",
-        type=str,
-        required=False,
-        help="Which device to run on, defaults to GPU if available else CPU",
-        choices=["cpu", "gpu", "cuda", "mps"],
-    )
-    parser.add_argument(
         "--weight-path", type=str, required=False, help="Path to saved policy weights"
     )
     parser.add_argument(
@@ -57,7 +50,7 @@ def run(args: argparse.Namespace) -> None:
 
     set_seeds(args.seed)
     env = DMCWrapper(suite.load(domain_name=args.domain, task_name=args.task))
-    config = Config(action_dim=env.action_dim, obs_dim=env.obs_dim, device=is_gpu(args.device))
+    config = Config(action_dim=env.action_dim, obs_dim=env.obs_dim)
     write_out_config(config=config, out_dir=out_dir)
 
     learner = SACLearner(config)
